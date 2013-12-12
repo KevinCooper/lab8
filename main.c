@@ -11,26 +11,26 @@ int main(void)
 {
 	WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
 	initRobot();
+	modTimer(70, 40);
+	moveForward();
 	P1DIR |= (BIT0 | BIT6);
-	setFrequency(SPEED_1MHZ);
-
 	for (;;) {
-		moveForward(15, 10);
+
 		if (isRightClose() == FALSE) {
-			stop();
+			P1OUT &= ~BIT0;
+			P1OUT |= BIT6;
 			halfLeft();
+			__delay_cycles(100000);
+		} else if (isCenterClose() == FALSE) {
+			halfLeft();;
+			P1OUT &= ~BIT6;
 			P1OUT |= BIT0;
 		} else {
 			P1OUT &= ~BIT0;
+			P1OUT &= ~BIT6;
+			moveForward();
 		}
 
-		if (isCenterClose() == FALSE) {
-			stop();
-			halfLeft();
-			P1OUT |= BIT6;
-		} else {
-			P1OUT &= ~BIT6;
-		}
 	}
 	return 0;
 }
